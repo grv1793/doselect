@@ -1,0 +1,8 @@
+These are the installation required for this project
+
+python === 2.7.14
+django === 1.11.16
+djangorestframework === 3.8.2
+djangorestframework-jwt === 1.11.0
+
+
