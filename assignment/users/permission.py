@@ -29,4 +29,6 @@ class HasValidKey(permissions.BasePermission):
 
     def has_permission(self, request, view):
 
-        return UserSession.objects.is_valid_key(request)
+        x = UserSession.objects.is_valid_key(request)
+        print('permission', x)
+        return x

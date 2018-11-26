@@ -34,7 +34,7 @@ class LogIn(object):
             return self.error_message, status.HTTP_400_BAD_REQUEST
 
         login_response = self._login_with_email()
-        print(login_response)
+
         if not login_response:
             self.response_data = 'Invalid Credentials'
             self.status_code = status.HTTP_401_UNAUTHORIZED

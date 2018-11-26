@@ -182,17 +182,19 @@ class UserSessionManager(SessionManager):
         :returns: boolean
         """
         user = request.user
-        token = request.data.get('access_key', None)
-        current_session = self.get_session_using_token(token)
+        token = request.META.get('HTTP_TOKEN', None)
 
+        current_session = self.get_session_using_token(token)
         ''' Below query is added to remove multiple devices which are (may be)
             already logged in whose session data not available in UserSession.
             This query can be changed to get a single session after some period
             of time.
         '''
         session_keys = list(self.get_session_keys_using_user(user, token))
-        if not current_session and len(session_keys) > 0:
-            logout(request)
+        print('session_keys', session_keys)
+        if not current_session:
+            if len(session_keys) > 0:
+                logout(request)
             return False
         return True
 

@@ -6,11 +6,10 @@ import random
 import string
 from datetime import timedelta, datetime
 
+
 MEDIA_UPLOAD_STRUCTURE = getattr(
     settings, "MEDIA_UPLOAD_STRUCTURE", ""
 )
-
-doc_code = 'user_doc'
 
 def encode_day(nday, size, chars):
     a = nday
@@ -58,7 +57,7 @@ def generate_file_path(instance, filename):
     else:
         instance_handle = instance_label + "_" + str(instance.id)
 
-    file_name = str(date.today()) + "/" + get_unique_friendly_id() + "/" + filename.upper()
+    file_name = str(date.today()) + "/" + get_unique_friendly_id() + "/" + filename.lower()
 
     return MEDIA_UPLOAD_STRUCTURE.format(
         module_name=module_name,
