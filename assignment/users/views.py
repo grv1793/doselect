@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import json
+import os
 import base64
 import operator
 from functools import reduce
 from django.db import transaction
 from django.db.models import Q
 from django.core.files.base import ContentFile
+from django.conf import settings
 
 from rest_framework import generics, status, exceptions
 from rest_framework.response import Response
@@ -20,7 +22,7 @@ from users.models import UserDocument
 from document.models import DocumentType
 from users.permission import HasValidKey
 from users.helper import get_user_doc
-from document.helper import get_doc_type, get_document_data
+from document.helper import get_doc_type, get_document_data, get_base64_encoded_string
 
 
 @permission_classes([])
@@ -66,10 +68,31 @@ class DocumentList(generics.ListCreateAPIView):
         response_data = ''
         status_code = status.HTTP_200_OK
 
-        docs = self.get_queryset()
-        response_data = self.get_documents_data(docs)
+        # method 1
+        # response_data = self.get_from_db()
+
+        # method 2
+        response_data = self.get_from_filesystem()
 
         return Response(status=status_code, data=response_data)
+
+    def get_from_db(self):
+        docs = self.get_queryset()
+        return self.get_documents_data(docs)
+
+    def get_from_filesystem(self):
+        doc_path = str(os.path.join(settings.DOCUMENTS_DIR, 'users'))
+        doc_path = str(os.path.join(doc_path, 'user_%s' % str(self.request.user.id)))
+        doc_files = []
+        base_dir_length = len(settings.BASE_DIR)
+        for path, subdirs, files in os.walk(doc_path):
+            for name in files:
+                doc_id, extension = name.split('.')
+                doc_data = {'id': int(doc_id), 'extension': extension}
+                file_path = os.path.join(path, name)[base_dir_length + 1:].replace("\\", "/")
+                doc_data['encoded_content'] = get_base64_encoded_string(file_path)
+                doc_files.append(doc_data)
+        return doc_files
 
     def get_queryset(self):
         query = self.get_query(self.request.query_params)

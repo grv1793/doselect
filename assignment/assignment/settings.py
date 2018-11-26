@@ -62,6 +62,8 @@ AUTH_USER_MODEL = 'users.User'
 # ------------------------------------------------------------------------------
 MEDIA_ROOT = str(os.path.join(BASE_DIR, 'media'))
 MEDIA_URL = '/media/'
+UPLOADS_DIR = str(os.path.join(MEDIA_ROOT, 'uploads'))
+DOCUMENTS_DIR = str(os.path.join(UPLOADS_DIR, 'documents'))
 MEDIA_UPLOAD_STRUCTURE = "uploads/documents/{module_name}/{instance_handle}/{doc_code}/{file_name}"
 
 # For Django REST Framework

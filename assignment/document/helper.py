@@ -21,12 +21,18 @@ def get_doc_type(doc_name):
         raise exceptions.NotFound('Invalid Document name!!!')
 
 
+def get_base64_encoded_string(file_path):
+    with open(file_path, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+    return encoded_string
+
+
 def get_document_data(doc):
     doc_data = {}
     if not bool(doc.filename):
         return doc_data
-    with open(str(doc.filename.url)[1:], "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read())
+
+    encoded_string = get_base64_encoded_string(str(doc.filename.url)[1:])
 
     doc_data['encoded_content'] = encoded_string
     doc_data['extension'] = doc.extension
